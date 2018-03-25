@@ -1,0 +1,21 @@
+%!TEX root = ../main.tex
+
+\section{Logistic Regression [Bonus: 1 + 3 + 1 + 5 = 10 pts] (Yuanning)}
+\textcolor{red}{(\textbf{Note: This is a bonus problem that is optional.})}
+
+Logistic regression is a specific case of generalized Iinear model to model joint distribution between $(y, x)$, with conditional distribution $y|x \sim \text{Bernoulli}(\mu)$, and logit link function $\beta^Tx = \log\Big(\frac{\mu}{1-\mu}\Big)$. In this problem, we'll use logistic regression to classify a person's age group (under 40 or not) from his movie ratings. Given $n$ $i.i.d.$ samples $(y_1, x_1), ..., (y_n, x_n)$, we formulate the problem as a binary classification with output label  $y \in \{0,1\}^n$, corresponding to whether a person`s age is under $40$, and input features $X \in \mathbb{R}^{n \times (p+1)}$. The first column of $X$ is taken to be $1_n$ to account for the intercept term. we solve the logistic regression problem using Iteratively Reweighted Least Squares (IRLS).
+
+\begin{enumerate}
+\item[(a)] Find the log likelihood of the samples $\ell(y, X, \beta)$.
+\item[(b)] Assume a fixed step length $t = 1$, derive the IRLS update for $\beta$. 
+\item[(c)] Given $X$, $y$ and $t$, write out the steps for performing IRLS to estimate $\hat{\beta}$.
+\item[(d)] Now, implement IRLS using the movie data set on the website (in \texttt{Question4\_data.zip}). You can stop IRLS when the change between consecutive objective values is less than 1e-6. Report both the train and test errors of classifying whether a person is under $40$. Plot $f^{(k)}$ versus $k$,  where $f^{(k)}$ denotes the objective value at outer iterations $k$ of IRLS. 
+\\
+\textbf{Note:} 
+\begin{itemize}
+\item As for the step size, the pure Newton`s method uses $t = 1$.  However, in practice we often use damped Newton`s method $x^+ = x - t(\nabla^2f(x))^{-1}\nabla f(x)$. At each Newton step, the step size $t$ is typically chosen by using backtrack line search, with parameter $0 < a \leq 0.5$, and $0 < b < 1$. At each iteration, we start with $t = 1$, and while $$f(x + tv) > f(x) + at\nabla f(x)^Tv $$ we shrink $t \leftarrow bt$, otherwise we perform the Newton update with the current $t$. Note that $v = -(\nabla^2f(x))^{-1}\nabla f(x)$ is the Newton direction.
+\item Initialize your weights with zeros. 
+\item Feel free to use Python/Matlab or any other language for your implementation. 
+\item Please submit all your answer (including derivations, calculated values, figures) to this problem in the pdf file, the executable code and provided dataset in the *.zip file.
+\end{itemize}
+\end{enumerate}

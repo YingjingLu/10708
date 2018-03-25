@@ -1,0 +1,38 @@
+%!TEX root = ../main.tex
+
+\section{KL-divergence [30 pts] (Yuanning)}
+\subsection{Divergence measures and maximum likelihood estimation (3 + 4 + 4 + 5 = 16 pts)} 
+In Lecture 8, we introduced \textit{Iterative Proportional Fitting} (IPF) algorithm as a way to learn the parameters of a undirected graphical model, and we claim that IPF is also a coordinate ascent algorithm (see slide 41). In this question, we are going to prove that \textbf{IPF algorithm is essentially a coordinate ascent algorithm that maximizes the likelihood $p(x; \theta)$ over parameter $\theta$}. Here we consider use KL-divergence as a tool to prove our main result. In Part (a-c) we prove a set of useful lemmas with respect to KL-divergence and MLE. Finally in Part (d), we prove the main result using lemmas from (a-c).
+
+\begin{itemize}
+\item[(a)] Let $p(x), q(x)$ be two positive probability densities on $\mathbb{R}$. Prove Gibbs inequality $$D_{KL}\big(p(x) \| q(x)\big) = \int p(x)\log\Big( \frac{p(x)}{q(x)}\Big) dx \geq 0$$ and the equality holds if $p(x) = q(x)$.
+\item[(b)] Assume we have $N$ $i.i.d.$ samples $x^{(1)}, ..., x^{(N)} \in \mathbb{R}^d$ from distribution $p(x; \theta^*)$, where $\theta^*$ is the true parameter that we want to estimate. The maximum likelihood estimator is $$\widehat{\theta}_{MLE} \equiv \underset{\theta}{\text{argmax}} ~ \frac{1}{N}\sum_{i=1}^N \log p(x^{(i)}; \theta)$$
+Show that, for large $N$, maximum likelihood estimation also (asymptotically) minimizes the KL-divergence $D_{KL}(p(x; \theta^*) \| p(x; \theta))$, i.e. 
+$$\widehat{\theta}_{MLE} = \underset{\theta}{\text{argmin}} ~ D_{KL}(p(x; \theta^*) \| p(x; \theta)), ~~~ N \rightarrow \infty$$
+\textbf{Hint}: consider the law of large numbers.
+\item[(c)] Let $p, q$ be two positive distributions, and $x_A, x_B$ be two (non-overlapping) sets of variables. Prove the following equation $$D_{KL}(p(x_A, x_B) \| q(x_A, x_B)) = D_{KL}(p(x_A) \| q(x_A)) + \sum_{x_{A}}p(x_A)D_{KL}(p(x_B | x_A) \| q(x_B | x_A))$$
+\item[(d)] Consider a decomposable undirected graphical model $p(x) = \frac{1}{Z} \prod_i \phi_{C_i}(x_{C_i})$, where $C_1,...,C_k$ are $k$ clusters of the graph, and $U = \cup_{i=1}^k C_i$ is the full set of all nodes. Given a set of $N$ $i.i.d.$ samples $x^{(1)},..., x^{(N)}$, the IPF algorithm estimates the potential function $\phi_C(x_C)$ for each cluster using the following iteration $$\phi_C^{(t+1)}(x_C) = \phi_C^{(t)}(x_C)\frac{\epsilon(x_C)}{p^{(t)}(x_C)}$$
+where $\epsilon(x_C) = \frac{1}{N}\sum_{i=1}^{n}\mathbb{I}[x_C = x_C^{(i)}]$ is the empirical marginal distribution of cluster $C$, and $p^{(t)}(x_C) = \sum_{x_{U \setminus C}} p^{(t)}(x) = \sum_{x_{U \setminus C}} \frac{1}{Z^{(t)}} \prod_{i=1}^k \phi_{C_i}^{(t)}(x_{C_i})$ is the estimated marginal distribution of cluster $C$ at the current step $t$. 
+
+Prove that IPF is coordinate ascent in the log likelihood of the data.
+
+\end{itemize}
+\textbf{Note}: coordinate ascent is an iterative way to find the maximum of a multivariate function $f(x)$ with $x \in \mathbb{R}^d$. Specifically, at each iteration, it minimizes $f(x)$ over a coordinate $x_i$ or coordinate block $x_C$ ($C = \{i_1,...,i_k\}$ is a subset of all the coordinates) while fixing all the other coordinates $x_{-C}$, i.e. 
+$$x_C^{(t+1)} = \underset{x_C}{\text{argmax}} ~f(x_C, x_{-C}^{(t)}) $$
+
+
+\subsection{Divergence measures and Fisher information (4 + 2 + 4 + 4 = 14 pts)}
+Fisher information is a way of measuring the amount of information that an observed variable $x$ has about parameter $\theta$ of a distribution $p(x; \theta)$. Divergence measures, such as KL-divergence, have deep connections to Fisher information from the perspective of information geometry. Here we are going to study some important properties that tie together Fisher information, KL-divergence, and parameter estimation. 
+\begin{itemize}
+\item[(a)] For a multivariate distribution $p(x; \theta)$ on $\mathbb{R}^d$ with $\theta \in \mathbb{R}^n$, and assume that regularity conditions apply to $p(x;\theta)$, the \textit{Fisher information matrix} $\mathcal{I}(\theta) \in \mathbb{R}^{n \times n}$ is defined as $$\mathcal{I}(\theta) \equiv \mathbb{E}_{p(x;\theta)}\big[ \nabla_{\theta} \log p(x;\theta) \nabla \log p(x;\theta)^T\big]$$ Show that  $$ \mathcal{I}(\theta) = -\mathbb{E}_{p(x;\theta)} [\nabla_{\theta}^2 \log p(x;\theta)]$$ 
+\item[(b)] Find the \textit{Fisher information matrix} $\mathcal{I}(\theta)$ for exponential family $p(x;\theta) = h(x)\exp[\theta^TT(x) - A(\theta)]$.
+\item[(c)] Let $p(x;\theta)$ be a distribution on $\mathbb{R}$, with $\theta \in \mathbb{R}$, and assume that regularity conditions apply to $p(x;\theta)$. We are often interested in how sensitive the pdf is with respect to parameter $\theta$. Consider distribution $p(x; \theta+\delta)$, where a small perturbation $\delta \in \mathbb{R}$ is added to parameter $\theta$. Show that, for small $\delta$ $$D_{KL}\big(p(x;\theta) \| p(x;\theta+\delta)\big) = -\frac{\delta^2}{2} \mathbb{E}_{p(x;\theta)}\big[\frac{\partial^2}{\partial \theta^2} \log p(x;\theta)\big] + o(\delta^2)$$
+\textbf{Note:} here we use little $o$ notation to represent remainder $r = o(\delta^2)$, which means $r / \delta^2 \rightarrow 0$, as $\delta \rightarrow 0$. 
+\item[(d)] Now consider the exponential family distribution $p(x;\theta) = h(x)\exp[\theta^TT(x) - A(\theta)]$, and small perturbed $p(x; \theta+\delta)$ with $\theta, \delta \in \mathbb{R}^n$.  Show that $$D_{KL}\big(p(x; \theta)||p(x; \theta+\delta)\big) = \frac{1}{2} \delta^T\nabla^2A(\theta)\delta + o(\|\delta\|^2)$$
+\end{itemize}
+
+
+
+
+
+
